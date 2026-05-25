@@ -1,0 +1,30 @@
+# Entorno virtual
+venv/
+
+# Builds y distribución
+build/
+dist/
+*.spec
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Modelos descargados (Whisper, pyannote)
+*.bin
+*.pt
+
+# Configuración local del usuario
+.config/
+
+# macOS
+.DS_Store
+
+# Scripts de ejecución generados automáticamente
+ejecutar_mac.sh
+ejecutar_windows.bat
+
+# Archivos temporales
+*.tmp
+*.log

@@ -1,0 +1,17 @@
+# AureaTranscribe — Dependencias
+# ═══════════════════════════════
+
+# Motor de transcripción (Whisper local, optimizado para CPU)
+faster-whisper>=1.0.0
+
+# Servidor web local
+flask>=3.0
+
+# Ventana de escritorio nativa (opcional pero recomendado)
+pywebview>=5.0
+
+# Exportación a Word (.docx)
+python-docx>=1.1
+
+# Exportación a PDF
+reportlab>=4.0

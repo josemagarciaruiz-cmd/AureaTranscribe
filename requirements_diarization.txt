@@ -1,0 +1,16 @@
+# AureaTranscribe — Dependencias para diarización de hablantes
+# ═══════════════════════════════════════════════════════════
+# Requiere además un token gratuito de HuggingFace:
+# https://huggingface.co/settings/tokens
+
+# Motor de diarización
+pyannote.audio>=3.1
+
+# PyTorch (necesario para pyannote)
+torch>=2.0
+torchaudio>=2.0
+
+# IMPORTANTE: Versión compatible de huggingface_hub
+# (versiones >=1.0 eliminaron el parámetro use_auth_token
+# que pyannote/speechbrain necesitan internamente)
+huggingface_hub>=0.25,<1.0
