@@ -50,7 +50,7 @@ def main():
         )
         webview.start(gui="cef" if sys.platform == "win32" else None)
 
-    except ImportError:
+    except Exception:
         # Fallback: abrir en navegador por defecto
         print("\n" + "=" * 60)
         print("  AureaTranscribe")
