@@ -60,9 +60,12 @@ def create_app():
 
     @app.route("/")
     def index():
-        html_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "index.html"
-        )
+        import sys
+        if getattr(sys, '_MEIPASS', None):
+            base_dir = sys._MEIPASS
+        else:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+        html_path = os.path.join(base_dir, "index.html")
         with open(html_path, "r", encoding="utf-8") as f:
             return f.read()
 
