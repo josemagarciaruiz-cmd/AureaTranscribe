@@ -1,3 +1,4 @@
+# Build #5 - fix index.html path
 name: Build Windows Installer
 
 on:
