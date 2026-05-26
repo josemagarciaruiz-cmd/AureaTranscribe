@@ -1,0 +1,62 @@
+name: Build Windows Installer v2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar FFmpeg
+        run: choco install ffmpeg -y
+
+      - name: Instalar dependencias
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Empaquetar con PyInstaller
+        run: |
+          $ffmpeg = (Get-Command ffmpeg).Source
+          $ffprobe = (Get-Command ffprobe).Source
+          pyinstaller `
+            --name="AureaTranscribe" `
+            --windowed `
+            --noconfirm `
+            --clean `
+            --add-data="index.html;." `
+            --add-binary="$ffmpeg;." `
+            --add-binary="$ffprobe;." `
+            --hidden-import=faster_whisper `
+            --hidden-import=pyannote.audio `
+            --hidden-import=flask `
+            --hidden-import=flask_cors `
+            --hidden-import=webview `
+            --collect-all=faster_whisper `
+            --collect-all=pyannote `
+            main.py
+
+      - name: Crear instalador con Inno Setup
+        run: |
+          choco install innosetup -y
+          iscc /dMyAppVersion="1.0.0" installer.iss
+
+      - name: Subir instalador como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: AureaTranscribe-Windows-Installer
+          path: Output\AureaTranscribeSetup.exe
+          retention-days: 30
