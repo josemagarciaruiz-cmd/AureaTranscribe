@@ -19,9 +19,6 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Instalar FFmpeg
-        run: choco install ffmpeg -y
-
       - name: Instalar dependencias
         run: |
           pip install --upgrade pip
@@ -31,16 +28,12 @@ jobs:
       - name: Empaquetar con PyInstaller
         shell: pwsh
         run: |
-          $ffmpeg = (Get-Command ffmpeg).Source
-          $ffprobe = (Get-Command ffprobe).Source
           pyinstaller `
             --name="AureaTranscribe" `
             --windowed `
             --noconfirm `
             --clean `
             "--add-data=index.html;." `
-            "--add-binary=$ffmpeg;." `
-            "--add-binary=$ffprobe;." `
             --hidden-import=faster_whisper `
             --hidden-import=flask `
             --hidden-import=flask_cors `
