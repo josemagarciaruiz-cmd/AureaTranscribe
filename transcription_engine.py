@@ -108,13 +108,6 @@ class TranscriptionResult:
 def get_ffmpeg_path() -> str:
     """Localiza FFmpeg en el sistema."""
     import shutil
-    import sys
-    # En ejecutable PyInstaller, buscar en la carpeta de extraccion
-    if getattr(sys, '_MEIPASS', None):
-                exe = 'ffmpeg.exe' if os.name == 'nt' else 'ffmpeg'
-                bundled = os.path.join(sys._MEIPASS, exe)
-                if os.path.exists(bundled):
-                                return bundled
     path = shutil.which("ffmpeg")
     if path:
         return path
@@ -126,13 +119,6 @@ def get_ffmpeg_path() -> str:
 def get_ffprobe_path() -> str:
     """Localiza FFprobe en el sistema."""
     import shutil
-    import sys
-    # En ejecutable PyInstaller, buscar en la carpeta de extraccion
-    if getattr(sys, '_MEIPASS', None):
-        exe = 'ffprobe.exe' if os.name == 'nt' else 'ffprobe'
-        bundled = os.path.join(sys._MEIPASS, exe)
-        if os.path.exists(bundled):
-            return bundled
     path = shutil.which("ffprobe")
     if path:
         return path
