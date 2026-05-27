@@ -15,6 +15,15 @@ from flask import Flask, request, jsonify, send_file
 
 logger = logging.getLogger("AureaTranscribe")
 logging.basicConfig(level=logging.INFO)
+# ── Log a fichero para diagnóstico ──
+try:
+    _log_dir = os.path.join(os.path.expanduser("~"), ".config", "aurea_transcribe")
+    os.makedirs(_log_dir, exist_ok=True)
+    _fh = logging.FileHandler(os.path.join(_log_dir, "app.log"), encoding="utf-8")
+    _fh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+    logging.getLogger().addHandler(_fh)
+except Exception:
+    pass
 
 _engine = None
 _jobs = {}
@@ -73,18 +82,22 @@ def create_app():
 
     @app.route("/api/info")
     def api_info():
-        engine = get_engine()
-        config = _load_config()
-        return jsonify({
-            "models": engine.AVAILABLE_MODELS,
-            "current_model": engine.model_name,
-            "diarization_available": engine.check_diarization(),
-            "hf_token_saved": bool(config.get("hf_token")),
-            "supported_formats": [
-                "mp3", "wav", "m4a", "ogg", "flac", "wma", "aac", "opus",
-                "mp4", "mkv", "avi", "mov", "webm", "wmv", "flv", "3gp",
-            ],
-        })
+        try:
+            engine = get_engine()
+            config = _load_config()
+            return jsonify({
+                "models": engine.AVAILABLE_MODELS,
+                "current_model": engine.model_name,
+                "diarization_available": engine.check_diarization(),
+                "hf_token_saved": bool(config.get("hf_token")),
+                "supported_formats": [
+                    "mp3", "wav", "m4a", "ogg", "flac", "wma", "aac", "opus",
+                    "mp4", "mkv", "avi", "mov", "webm", "wmv", "flv", "3gp",
+                ],
+            })
+        except Exception as e:
+            logger.exception("Error en api_info")
+            return jsonify({"error": str(e)}), 500
 
     # ── Guardar/cargar token HuggingFace ──
 
@@ -330,6 +343,12 @@ def create_app():
         except Exception as e:
             logger.exception("Error al exportar")
             return jsonify({"error": str(e)}), 500
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        import traceback
+        logger.error("Unhandled exception:\n" + traceback.format_exc())
+        return jsonify({"error": str(e), "type": type(e).__name__}), 500
 
     return app
 
